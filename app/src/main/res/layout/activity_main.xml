@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/result"
         android:text="0"
-        android:textSize="76dp"
+        android:textSize="56dp"
         android:textAlignment="textEnd"
         android:textColor="@color/white"
         android:layout_above="@+id/buttons_layout"
