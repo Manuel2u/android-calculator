@@ -11,6 +11,7 @@ import com.google.android.material.button.MaterialButton;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -80,7 +81,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     boolean isResultDisplayed = false;
 
-
     @Override
     public void onClick(View v) {
         MaterialButton button = (MaterialButton) v;
@@ -101,6 +101,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Append digit or decimal point to the expression
             expression.append(buttonText);
             updateResultDisplay(expression.toString());
+        } else if (v.getId() == R.id.button_percentage) {
+            if (!endsWithOperator(expression)) {
+                float expressionValue = Float.parseFloat(expression.toString());
+                System.out.println(expressionValue);
+                float percentage = (float) (expressionValue * 0.01);
+
+
+
+
+                // Clear the expression and append the percentage value to it
+                expression.setLength(0);
+                expression.append(percentage);
+                System.out.println(expression.toString());
+
+                updateResultDisplay(expression.toString());
+            }
         } else if (v.getId() == R.id.button_c) {
             // Remove the last character from the expression
             if (expression.length() > 0) {
@@ -124,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     expression.setLength(0);
                     expression.append(formatResult(resultValue));
                     result.setText(expression.toString());
-                    isResultDisplayed = true;
+                    isResultDisplayed = true;  // Set the result displayed flag to true
                 }
             } catch (ArithmeticException e) {
                 expression.setLength(0);
@@ -156,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 buttonId == R.id.button_divide;
     }
 
-
     // Helper method to check if the expression ends with an operator
     private boolean endsWithOperator(CharSequence expression) {
         return expression.length() > 0 && isOperator(expression.charAt(expression.length() - 1));
@@ -180,7 +195,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Format the number or operator
             if (isNumeric(part)) {
-                part = formatNumber(part);
+                System.out.println(part);
+
+//                part = formatNumber(part);
+                System.out.println(part);
             } else if (part.equalsIgnoreCase("x")) {
                 part = "*";
             }
@@ -202,11 +220,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String formatResult(double result) {
         // Use DecimalFormat to format the result with commas for thousands
-        DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
         return decimalFormat.format(result);
     }
 
+    private String formatPercent(String number) {
+
+            // Format the number with commas
+          DecimalFormat  decimalFormat = new DecimalFormat("#,###.####");
+
+        return decimalFormat.format(Double.parseDouble(number));
+    }
     private String formatNumber(String number) {
+
+
         // Format the number with commas
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
         return decimalFormat.format(Double.parseDouble(number));
@@ -214,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isNumeric(String str) {
         // Check if the string is numeric
-        return str.matches("-?\\d+(\\.\\d+)?");
+        str = str.trim();
+        Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+        return pattern.matcher(str).matches();
     }
-
-
 
     private double evaluateExpression(String expression) {
         String[] tokens = expression.split(" ");
@@ -281,8 +308,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return result;
     }
-
-
 
     private boolean isOperator(String token) {
         return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
