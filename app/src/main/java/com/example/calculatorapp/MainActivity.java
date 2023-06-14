@@ -10,6 +10,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -104,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v.getId() == R.id.button_percentage) {
             if (!endsWithOperator(expression)) {
                 float expressionValue = Float.parseFloat(expression.toString());
-                System.out.println(expressionValue);
                 float percentage = (float) (expressionValue * 0.01);
 
 
@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Clear the expression and append the percentage value to it
                 expression.setLength(0);
                 expression.append(percentage);
-                System.out.println(expression.toString());
 
                 updateResultDisplay(expression.toString());
             }
@@ -150,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (isOperatorButton(v.getId())) {
             String[] tokens = expression.toString().split(" ");
             int numTokens = tokens.length;
-
             // Check if the last token is an operator
             if (numTokens > 0 && isOperator(tokens[numTokens - 1])) {
                 // Remove the last token (operator)
@@ -158,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             // Append the operator to the expression
+            if(buttonText.equalsIgnoreCase("X")) {
+                buttonText = "*";
+            }
             expression.append(" ").append(buttonText).append(" ");
 
             // Update the result display
@@ -195,10 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Format the number or operator
             if (isNumeric(part)) {
-                System.out.println(part);
-
 //                part = formatNumber(part);
-                System.out.println(part);
             } else if (part.equalsIgnoreCase("x")) {
                 part = "*";
             }
@@ -250,9 +248,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String[] tokens = expression.split(" ");
         List<Double> operands = new ArrayList<>();
         List<String> operators = new ArrayList<>();
-
         // Remove any empty tokens caused by consecutive operators
         for (String token : tokens) {
+            token = token.trim();
             if (!token.isEmpty()) {
                 if (isOperator(token)) {
                     operators.add(token);
@@ -279,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 1; i < operands.size(); i++) {
             String operator = operators.get(operatorIndex);
             double operand = operands.get(i);
-
             switch (operator) {
                 case "+":
                     result += operand;
@@ -288,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     result -= operand;
                     break;
                 case "*":
-                    result *= operand;
+                    result = result * operand;
                     break;
                 case "/":
                     if (operand != 0) {
@@ -310,6 +307,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isOperator(String token) {
-        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/");
+        return token.equals("+") || token.equals("-") || token.equals("*") || token.equals("/") || token.equals("x");
     }
 }
